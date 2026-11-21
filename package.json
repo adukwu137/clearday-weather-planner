@@ -1,0 +1,14 @@
+{
+    "name": "clearday",
+    "version": "1.0.0",
+    "description": "Weather and air quality planner. Node server with a cached Open-Meteo backend and a plain HTML, CSS and JavaScript frontend.",
+    "main": "server.js",
+    "license": "MIT",
+    "private": true,
+    "engines": { "node": ">=18"},
+    "scripts": {
+        "start": "node server.js",
+        "dev": "node --watch server.js",
+        "test": "node --test"
+    }
+}
