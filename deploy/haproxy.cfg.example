@@ -1,0 +1,31 @@
+# ClearDay on lb-01. Compare this with /etc/haproxy/haproxy.cfg and edit your existing file.
+# Keep your existing "global" and "defaults" sections.
+# Do NOT add a second frontend that binds the same ports. If you already have one, edit it.
+#
+# One certificate for both names (adjust the paths to your setup):
+#   sudo systemctl stop haproxy
+#   sudo certbot certonly --standalone --cert-name www.adukwu137.tech --expand \
+#        -d www.adukwu137.tech -d adukwu137.tech
+#   sudo cat /etc/letsencrypt/live/www.adukwu137.tech/fullchain.pem \
+#            /etc/letsencrypt/live/www.adukwu137.tech/privkey.pem \
+#        | sudo tee /etc/haproxy/certs/www.adukwu137.tech.pem > /dev/null
+#   sudo systemctl start haproxy
+
+frontend clearday_front
+    bind *:80
+    bind *:443 ssl crt /etc/haproxy/certs/www.adukwu137.tech.pem
+    option forwardfor
+    http-request set-header X-Forwarded-Proto https if { ssl_fc }
+    # The bare domain goes to www over HTTPS in one step
+    http-request redirect prefix https://www.adukwu137.tech code 301 if { hdr(host) -i adukwu137.tech }
+    # Plain HTTP on the domain goes to HTTPS. Requests by IP address stay on HTTP,
+    # so "curl http://3.10.24.245/" still shows the X-Served-By header.
+    http-request redirect scheme https code 301 if { hdr(host) -i www.adukwu137.tech } !{ ssl_fc }
+    default_backend clearday_servers
+
+backend clearday_servers
+    balance roundrobin
+    option httpchk GET /api/health
+    http-check expect status 200
+    server 7232-web-01 18.171.204.227:80 check inter 5s fall 3 rise 2
+    server 7232-web-02 18.171.160.168:80 check inter 5s fall 3 rise 2
