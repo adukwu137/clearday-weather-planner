@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ClearDay: weather and air quality planner</title>
+  <meta name="description" content="Search a city for current weather, a 7-day forecast and air quality, with an outdoor rating for each day.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/styles.css">
+  <script src="/js/logic.js" defer></script>
+  <script src="/js/app.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to the forecast</a>
+
+  <header class="topbar">
+    <div class="brand">ClearDay</div>
+    <form id="search-form" class="search" role="search" novalidate>
+      <label class="sr-only" for="city">City name</label>
+      <input id="city" name="city" type="search" placeholder="Search for a city" autocomplete="off" maxlength="60" aria-describedby="search-error">
+      <button id="search-btn" class="btn primary" type="submit">Search</button>
+    </form>
+    <div class="units" role="group" aria-label="Units">
+      <button class="btn seg" type="button" data-unit="metric" aria-pressed="true">°C, km/h</button>
+      <button class="btn seg" type="button" data-unit="imperial" aria-pressed="false">°F, mph</button>
+    </div>
+    <p id="search-error" class="field-error" role="alert" hidden></p>
+  </header>
+
+  <div class="layout">
+    <aside class="side" aria-label="Saved places">
+      <section aria-labelledby="fav-heading">
+        <h2 id="fav-heading">Favorites</h2>
+        <ul id="favorites" class="plain"></ul>
+        <p id="favorites-empty" class="muted">Cities you save appear here.</p>
+      </section>
+      <section aria-labelledby="recent-heading">
+        <h2 id="recent-heading">Recent searches</h2>
+        <ul id="recent" class="plain"></ul>
+        <p id="recent-empty" class="muted">Cities you view appear here.</p>
+        <button id="clear-recent" class="btn" type="button">Clear history</button>
+      </section>
+    </aside>
+
+    <main id="main" tabindex="-1" aria-busy="false">
+      <div id="notices"></div>
+
+      <section id="search-results" class="panel" aria-labelledby="results-heading" hidden>
+        <h2 id="results-heading">Choose a city</h2>
+        <div id="results-body"></div>
+      </section>
+
+      <p id="loading" class="loading" role="status" hidden>Loading forecast</p>
+
+      <div id="report" hidden>
+        <div class="top-grid">
+          <section class="panel" aria-labelledby="current-heading">
+            <h2 id="current-heading" class="sr-only">Current weather</h2>
+            <div id="current-body"></div>
+          </section>
+          <section class="panel" aria-labelledby="air-heading">
+            <h2 id="air-heading">Air quality</h2>
+            <div id="air-body"></div>
+          </section>
+        </div>
+
+        <section class="panel" aria-labelledby="adv-heading">
+          <h2 id="adv-heading">Forecast advisories</h2>
+          <div id="advisories-body"></div>
+        </section>
+
+        <section class="panel" aria-labelledby="chart-heading">
+          <h2 id="chart-heading">Temperature today</h2>
+          <div id="chart-body"></div>
+        </section>
+
+        <section class="panel" aria-labelledby="forecast-heading">
+          <h2 id="forecast-heading">7-day forecast</h2>
+          <div class="controls">
+            <label for="sort">Sort by</label>
+            <select id="sort">
+              <option value="date">Date</option>
+              <option value="tmax">Highest temperature</option>
+              <option value="rain">Most rain</option>
+              <option value="aqi">Best air quality</option>
+              <option value="score">Best for outdoors</option>
+            </select>
+            <div class="filters" role="group" aria-label="Filter days">
+              <button class="btn seg" type="button" data-filter="all" aria-pressed="true">All days</button>
+              <button class="btn seg" type="button" data-filter="dry" aria-pressed="false">Dry days</button>
+              <button class="btn seg" type="button" data-filter="rain" aria-pressed="false">Rain days</button>
+              <button class="btn seg" type="button" data-filter="goodair" aria-pressed="false">Good air</button>
+            </div>
+          </div>
+          <p id="forecast-count" class="muted" role="status"></p>
+          <div class="table-wrap" tabindex="0" role="region" aria-label="7-day forecast table">
+            <table>
+              <caption class="sr-only">Seven-day forecast with rain, UV, air quality and outdoor rating</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Day</th><th scope="col">Conditions</th><th scope="col">High / low</th>
+                  <th scope="col">Rain</th><th scope="col">UV</th><th scope="col">AQI</th><th scope="col">Outdoors</th>
+                </tr>
+              </thead>
+              <tbody id="forecast-rows"></tbody>
+            </table>
+          </div>
+          <p class="muted small">The outdoor rating combines rain, temperature, UV and air quality for each day.</p>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <p><a href="https://open-meteo.com/" rel="noopener">Weather data by Open-Meteo.com</a>, licensed CC BY 4.0. Air quality data comes from CAMS through Open-Meteo.</p>
+    <p>Served by <strong id="served-by">unknown</strong></p>
+    <nav aria-label="Legal"><a href="/privacy">Privacy</a><a href="/terms">Terms</a></nav>
+  </footer>
+</body>
+</html>
+
+#file works
