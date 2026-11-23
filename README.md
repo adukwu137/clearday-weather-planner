@@ -170,27 +170,74 @@ Look for another site or `conf.d` file that also listens on port 80, a second `d
 
 Output of `bash deploy/verify-deployment.sh` from my computer:
 
-```text
-PASTE OUTPUT HERE
-```
+== 1. Each web server directly ==
+$ curl http://18.171.204.227/api/health
+{"status":"ok","server":"7232-web-01","uptimeSeconds":32519,"time":"2026-11-23T07:03:34.440Z"}
+PASS  web-01 answers with ClearDay's health JSON (server: 7232-web-01)
+$ curl http://18.171.160.168/api/health
+{"status":"ok","server":"7232-web-02","uptimeSeconds":29263,"time":"2026-11-23T07:03:36.687Z"}
+PASS  web-02 answers with ClearDay's health JSON (server: 7232-web-02)
+PASS  web-01 serves the ClearDay page
+PASS  web-02 serves the ClearDay page
+
+== 2. Load balancer: health and alternating X-Served-By ==
+$ curl http://3.10.24.245/api/health
+{"status":"ok","server":"7232-web-02","uptimeSeconds":29267,"time":"2026-11-23T07:03:40.897Z"}
+PASS  load balancer answers with ClearDay's health JSON (server: 7232-web-02)
+$ for i in 1 2 3 4 5 6; do curl -sI http://3.10.24.245/ | grep -i x-served-by; done
+x-served-by: 7232-web-01
+x-served-by: 7232-web-02
+x-served-by: 7232-web-01
+x-served-by: 7232-web-02
+x-served-by: 7232-web-01
+x-served-by: 7232-web-02
+PASS  requests alternate between two servers
+PASS  load balancer serves the ClearDay page
+
+== 3. Public address and HTTPS ==
+$ curl -sI https://www.adukwu137.tech/ | grep -i x-served-by
+x-served-by: 7232-web-02
+PASS  https://www.adukwu137.tech serves the ClearDay page
+$ curl -sI http://www.adukwu137.tech/   ->   301 https://www.adukwu137.tech/
+PASS  http://www.adukwu137.tech redirects to HTTPS
+$ curl -L http://adukwu137.tech/   ->   200 https://www.adukwu137.tech/
+PASS  http://adukwu137.tech ends at https://www.adukwu137.tech
+$ curl -L https://adukwu137.tech/   ->   200 https://www.adukwu137.tech/
+PASS  https://adukwu137.tech ends at https://www.adukwu137.tech
+
+== Result ==
+All checks passed.
+
 
 Both web servers answer directly:
 
-```text
-PASTE curl http://18.171.204.227/api/health AND curl http://18.171.160.168/api/health OUTPUT HERE
-```
+$ curl http://18.171.204.227/api/health
+{"status":"ok","server":"7232-web-01","uptimeSeconds":32519,"time":"2026-11-23T07:03:34.440Z"}
+PASS  web-01 answers with ClearDay's health JSON (server: 7232-web-01)
+$ curl http://18.171.160.168/api/health
+{"status":"ok","server":"7232-web-02","uptimeSeconds":29263,"time":"2026-11-23T07:03:36.687Z"}
+PASS  web-02 answers with ClearDay's health JSON (server: 7232-web-02)
+PASS  web-01 serves the ClearDay page
+PASS  web-02 serves the ClearDay page
 
 Requests through the load balancer alternate between the servers:
 
-```text
-PASTE THE SIX X-Served-By LINES HERE
-```
+x-served-by: 7232-web-01
+x-served-by: 7232-web-02
+x-served-by: 7232-web-01
+x-served-by: 7232-web-02
+x-served-by: 7232-web-01
+x-served-by: 7232-web-02
+
 
 Failover test (web-01 stopped, requests still answered by web-02):
 
-```text
-PASTE FAILOVER RESULT HERE
-```
+x-served-by: 7232-web-02
+x-served-by: 7232-web-02
+x-served-by: 7232-web-02
+x-served-by: 7232-web-02
+x-served-by: 7232-web-02
+x-served-by: 7232-web-02
 
 Screenshots of the deployed site at https://www.adukwu137.tech:
 
