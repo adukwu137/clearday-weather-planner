@@ -9,7 +9,7 @@ The app runs as a small Node.js server on two web servers behind a load balancer
 | | |
 |---|---|
 | Live site (through the load balancer) | https://www.adukwu137.tech (also reachable at http://3.10.24.245) |
-| Demo video (under 2 minutes) | ADD DEMO VIDEO LINK HERE |
+| Demo video (under 2 minutes) | https://youtu.be/zJxKqdmg6ZQ |
 | Source code | https://github.com/adukwu137/clearday-weather-planner |
 | Login or API key needed | None. See [Credentials](#credentials) |
 
