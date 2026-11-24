@@ -260,7 +260,7 @@ Errors look like `{ "error": { "code": "...", "message": "..." } }`. Every respo
 
 ## Tests
 
-`npm test` runs 36 automated tests:
+`npm test` runs 37 automated tests:
 
 - rating, advisory and data conversion rules;
 - sorting, filtering, units and saved-place logic;
