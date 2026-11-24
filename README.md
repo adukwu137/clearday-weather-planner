@@ -86,12 +86,6 @@ Set these as environment variables or in a `.env` file (see `.env.example`). All
 | `RATE_LIMIT_PER_MINUTE` | `120` | Requests per minute allowed per visitor on `/api` routes |
 | `SERVER_NAME` | machine hostname | Value of the `X-Served-By` header and the footer label |
 
-### Docker (optional)
-
-```bash
-docker build -t clearday .
-docker run -p 3000:3000 clearday
-```
 
 ## Deploy to the web servers and the load balancer
 
@@ -170,6 +164,7 @@ Look for another site or `conf.d` file that also listens on port 80, a second `d
 
 Output of `bash deploy/verify-deployment.sh` from my computer:
 
+```text
 == 1. Each web server directly ==
 $ curl http://18.171.204.227/api/health
 {"status":"ok","server":"7232-web-01","uptimeSeconds":32519,"time":"2026-11-23T07:03:34.440Z"}
@@ -207,37 +202,31 @@ PASS  https://adukwu137.tech ends at https://www.adukwu137.tech
 
 == Result ==
 All checks passed.
+```
 
-
-Both web servers answer directly:
-
-$ curl http://18.171.204.227/api/health
-{"status":"ok","server":"7232-web-01","uptimeSeconds":32519,"time":"2026-11-23T07:03:34.440Z"}
-PASS  web-01 answers with ClearDay's health JSON (server: 7232-web-01)
-$ curl http://18.171.160.168/api/health
-{"status":"ok","server":"7232-web-02","uptimeSeconds":29263,"time":"2026-11-23T07:03:36.687Z"}
-PASS  web-02 answers with ClearDay's health JSON (server: 7232-web-02)
-PASS  web-01 serves the ClearDay page
-PASS  web-02 serves the ClearDay page
 
 Requests through the load balancer alternate between the servers:
 
+```text
 x-served-by: 7232-web-01
 x-served-by: 7232-web-02
 x-served-by: 7232-web-01
 x-served-by: 7232-web-02
 x-served-by: 7232-web-01
 x-served-by: 7232-web-02
+```
 
 
 Failover test (web-01 stopped, requests still answered by web-02):
 
+```text
 x-served-by: 7232-web-02
 x-served-by: 7232-web-02
 x-served-by: 7232-web-02
 x-served-by: 7232-web-02
 x-served-by: 7232-web-02
 x-served-by: 7232-web-02
+```
 
 Screenshots of the deployed site at https://www.adukwu137.tech:
 
@@ -271,7 +260,7 @@ Errors look like `{ "error": { "code": "...", "message": "..." } }`. Every respo
 
 ## Tests
 
-`npm test` runs 37 automated tests:
+`npm test` runs 36 automated tests:
 
 - rating, advisory and data conversion rules;
 - sorting, filtering, units and saved-place logic;
